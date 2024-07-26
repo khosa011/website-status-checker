@@ -1,0 +1,61 @@
+document.getElementById('upload-btn').addEventListener('click', function() {
+    const fileInput = document.getElementById('csv-file');
+    const file = fileInput.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const csvData = event.target.result;
+            processCSV(csvData);
+        };
+        reader.readAsText(file);
+    } else {
+        alert('Please select a CSV file.');
+    }
+});
+
+function processCSV(data) {
+    const rows = data.trim().split('\n').map(row => row.split(','));
+    const headers = rows.shift(); // Remove headers
+
+    const results = [];
+    const promises = rows.map(async (row) => {
+        const [companyName, url] = row;
+        const status = await checkStatus(url);
+        results.push({ companyName, url, status });
+    });
+
+    Promise.all(promises).then(() => {
+        results.sort((a, b) => {
+            if (a.status === b.status) {
+                return a.companyName.localeCompare(b.companyName);
+            }
+            return a.status === 'Online' ? -1 : 1;
+        });
+
+        displayResults(results);
+    });
+}
+
+async function checkStatus(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok ? 'Online' : 'Offline';
+    } catch {
+        return 'Offline';
+    }
+}
+
+function displayResults(results) {
+    const tbody = document.querySelector('#results-table tbody');
+    tbody.innerHTML = '';
+
+    results.forEach(result => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${result.companyName}</td>
+            <td><a href="${result.url}" target="_blank">${result.url}</a></td>
+            <td>${result.status}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}

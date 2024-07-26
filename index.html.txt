@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Status Checker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Website Status Checker</h1>
+    </header>
+    <main>
+        <input type="file" id="csv-file" accept=".csv">
+        <button id="upload-btn">Upload CSV</button>
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Company URL</th>
+                    <th>Website Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
